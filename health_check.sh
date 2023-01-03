@@ -1,5 +1,4 @@
 #!/bin/bash
 
-echo "Hello from shell script"
-
-exit 0
+response=$(curl 'http://localhost:8080/health');
+[[ "$response" == 'ok' ]];
