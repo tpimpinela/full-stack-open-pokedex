@@ -34,5 +34,7 @@ jobs:
           wait-on: http://localhost:8080
           install: false
       - uses: "superfly/flyctl-actions/setup-flyctl@master"
+        if: ${{ github.event_name == 'push' }}
       - name: deploy to prod
+        if: ${{ github.event_name == 'push' }}
         run: flyctl deploy --remote-only
