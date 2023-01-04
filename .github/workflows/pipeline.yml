@@ -34,7 +34,16 @@ jobs:
           wait-on: http://localhost:8080
           install: false
       - uses: "superfly/flyctl-actions/setup-flyctl@master"
-        if: ${{ github.event_name == 'push' }}
+        if: github.event_name == 'push'
       - name: deploy to prod
-        if: ${{ github.event_name == 'push' }}
+        if: github.event_name == 'push'
         run: flyctl deploy --remote-only
+  tag_release:
+    if: github.event.name == 'push'
+    needs: simple_deployment_pipeline
+    env: 
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      DEFAULT_BUMP: patch
+    runs-on: "ubuntu-20.04"
+    steps: 
+      - uses: anothrNick/github-tag-action@v1
