@@ -34,12 +34,12 @@ jobs:
           wait-on: http://localhost:8080
           install: false
       - uses: "superfly/flyctl-actions/setup-flyctl@master"
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && !contains(join(github.event.commits.*.message), '#skip')
       - name: deploy to prod
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' && !contains(join(github.event.commits.*.message), '#skip')
         run: flyctl deploy --remote-only
   tag_release:
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && !contains(join(github.event.commits.*.message), '#skip')
     needs: simple_deployment_pipeline
     env: 
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
