@@ -38,6 +38,30 @@ jobs:
       - name: deploy to prod
         if: github.event_name == 'push' && !contains(join(github.event.commits.*.message), '#skip')
         run: flyctl deploy --remote-only
+      - name: success notification
+        if: success()
+        uses: rjstone/discord-webhook-notify@v1
+        with:
+            severity: info
+            username: Pokedex BOT
+            color: '#32CD32'
+            avatarUrl: https://lorempokemon.fakerapi.it/pokemon
+            description: to https://fullstackopen-part11.fly.dev/ by ${{github.actor}}
+            text: A new version of Pokedex deployed.
+            footer: 'Severity: Informational'
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: failure notification
+        if: failure()
+        uses: rjstone/discord-webhook-notify@v1
+        with:
+            severity: info
+            username: Pokedex BOT
+            color: '#ff3333'
+            avatarUrl: https://lorempokemon.fakerapi.it/pokemon
+            description: Build failed
+            text: commit ${{github.event.head_commit.id}} by ${{github.actor}} broke the build :(
+            footer: 'Severity: Error'
+            webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
   tag_release:
     if: github.event_name == 'push' && !contains(join(github.event.commits.*.message), '#skip')
     needs: simple_deployment_pipeline
